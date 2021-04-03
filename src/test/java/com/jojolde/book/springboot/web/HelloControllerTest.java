@@ -1,4 +1,4 @@
-package com.jojolde.book.springboot;
+package com.jojolde.book.springboot.web;
 
 import com.jojolde.book.springboot.web.HelloController;
 import org.junit.Test;
