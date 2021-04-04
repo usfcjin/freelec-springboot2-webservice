@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 // 테스트를 진행할때 JUnit에 내장된 실행자외에 다른 실행자를 실행해줍니다.
@@ -32,6 +32,7 @@ public class HelloControllerTest {
 
     @Test
     public void hello_return() throws Exception {
+
         String hello = "hello";
 
         mvc.perform(get("/hello"))
@@ -46,6 +47,28 @@ public class HelloControllerTest {
                 // mvc.perform의 결과를 검증합니다.
                 // 응답 본문의 내용을 검증합니다.
                 // Controller 에서 "hello"를 리턴하기 대문에 이 값이 맞는지 검증합니다.
+
+    }
+
+    @Test
+    public void helloDto_return() throws Exception {
+
+        String name = "hello";
+        int amount = 1000;
+
+        mvc.perform(
+                    get("/hello/dto")
+                        .param("name", name)
+                        // API 테스트할 때 사용될 요청 파라미터를 설정합니다.
+                        // 단, 값은 String만 허용됩니다.
+                        // 그래서 숫자/ 날짜 등의 데이터도 등록할 때는 문자열로 변겨해야만 가능합니다.
+                        .param("amount", String.valueOf(amount)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name", is(name)))
+                    // JSON 응답값ㅇ르 필드별로 검증할 수 있는 메소드입니다.
+                    // $를 기준으로 필드명을 명시합니다.
+                    // 여기서는 name과 amount를 명시하나 $.name, $.amount로 검증합니다.
+                    .andExpect(jsonPath("$.amount", is(amount)));
 
     }
 }
